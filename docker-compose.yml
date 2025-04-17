@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - urgency-network
+
+  caller-operator-service:
+    build: ./caller-operator-service
+    container_name: caller-operator-service
+    restart: always
+    ports:
+      - "3001:3000"
+    environment:
+      - PORT=3000
+      - MONGODB_URI=mongodb://mongodb:27017/urgency-system
+      - TEAM_SERVICE_URL=http://team-service:3000
+      - INCIDENT_SERVICE_URL=http://incident-service:3000
+    depends_on:
+      - mongodb
+    networks:
+      - urgency-network
+
+  team-service:
+    build: ./team-service
+    container_name: team-service
+    restart: always
+    ports:
+      - "3002:3000"
+    environment:
+      - PORT=3000
+      - MONGODB_URI=mongodb://mongodb:27017/urgency-system
+      - CALLER_OPERATOR_SERVICE_URL=http://caller-operator-service:3000
+      - INCIDENT_SERVICE_URL=http://incident-service:3000
+    depends_on:
+      - mongodb
+    networks:
+      - urgency-network
+
+  incident-service:
+    build: ./incident-service
+    container_name: incident-service
+    restart: always
+    ports:
+      - "3003:3000"
+    environment:
+      - PORT=3000
+      - MONGODB_URI=mongodb://mongodb:27017/urgency-system
+      - CALLER_OPERATOR_SERVICE_URL=http://caller-operator-service:3000
+      - TEAM_SERVICE_URL=http://team-service:3000
+    depends_on:
+      - mongodb
+      - caller-operator-service
+      - team-service
+    networks:
+      - urgency-network
+
+networks:
+  urgency-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
