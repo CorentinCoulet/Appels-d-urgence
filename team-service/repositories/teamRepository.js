@@ -15,3 +15,7 @@ export const getAvailableTeam = async () => {
 export const updateTeamAvailability = async (id, availability) => {
     return await Team.findByIdAndUpdate(id, { availability }, { new: true });
 };
+
+export const getTeamById = async (id) => {
+    return await Team.findById(id);
+};

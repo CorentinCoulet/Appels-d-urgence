@@ -21,3 +21,12 @@ export const releaseTeam = async (teamId) => {
         throw new Error("Erreur lors de la libération de l'équipe.");
     }
 };
+
+export const getTeamById = async (teamId) => {
+    try {
+        const res = await axios.get(`${TEAM_SERVICE_URL}/api/teams/${teamId}`);
+        return res.data;
+    } catch (error) {
+        throw new Error("Équipe introuvable.");
+    }
+};

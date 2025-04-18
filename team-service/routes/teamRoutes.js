@@ -7,5 +7,6 @@ router.post('/', teamController.createTeam);
 router.get('/', teamController.getAllTeams);
 router.get('/available', teamController.getAvailableTeam);
 router.patch('/:id', teamController.updateTeamAvailability);
+router.get('/:id', teamController.getTeamById);
 
 export default router;

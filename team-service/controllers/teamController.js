@@ -47,3 +47,17 @@ export const updateTeamAvailability = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
+export const getTeamById = async (req, res) => {
+    try {
+        const team = await repository.getTeamById(req.params.id);
+
+        if (!team) {
+            return res.status(404).json({ error: 'Équipe introuvable' });
+        }
+
+        res.status(200).json(team);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
